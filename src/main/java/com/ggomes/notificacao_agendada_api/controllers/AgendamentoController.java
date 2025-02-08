@@ -1,6 +1,8 @@
 package com.ggomes.notificacao_agendada_api.controllers;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +21,16 @@ public class AgendamentoController {
 
     private final AgendamentoService agendamentoService;
 
+    
     @PostMapping
     public ResponseEntity<AgendamentoResponseDTO> criarAgendamento(@RequestBody AgendamentoRequestDTO request) {
         AgendamentoResponseDTO response = agendamentoService.criarAgendamento(request);
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<AgendamentoResponseDTO> buscarAgendamento(@PathVariable Long id) {
+        AgendamentoResponseDTO response = agendamentoService.buscarAgendamento(id);
         return ResponseEntity.ok(response);
     }
 
