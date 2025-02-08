@@ -3,6 +3,7 @@ package com.ggomes.notificacao_agendada_api.business.services;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ggomes.notificacao_agendada_api.controllers.dtos.AgendamentoRequestDTO;
 import com.ggomes.notificacao_agendada_api.controllers.dtos.AgendamentoResponseDTO;
@@ -51,6 +52,28 @@ public class AgendamentoService {
     public AgendamentoResponseDTO buscarAgendamento(Long id) {
         AgendamentoEntity agendamento = agendamentoRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id));
+
+        return new AgendamentoResponseDTO(
+            agendamento.getId(),
+            agendamento.getDataEnvio(),
+            agendamento.getDestinatario(),
+            agendamento.getTelefone(),
+            agendamento.getMensagem(),
+            agendamento.getStatus()
+        );
+    }
+    
+    @Transactional
+    public AgendamentoResponseDTO cancelarAgendamento(Long id) {
+        AgendamentoEntity agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id));
+
+        if (agendamento.getStatus() == StatusAgendamento.CANCELADO) {
+            throw new InvalidException("O agendamento já está cancelado.");
+        }
+
+        agendamento.setStatus(StatusAgendamento.CANCELADO);
+        agendamentoRepository.save(agendamento);
 
         return new AgendamentoResponseDTO(
             agendamento.getId(),
